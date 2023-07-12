@@ -7,10 +7,10 @@
 #include <iostream>
 #include "ui/DefaultExceptionPrinter.h"
 
-void print_time(time_t timestamp)
+void print_time(std::time_t timestamp)
 {
-    tm time;
-    localtime_s(&time, &timestamp);
+    std::tm time;
+    time = *std::localtime(&timestamp);
 
     printf(
         "%02d.%02d.%d %d:%02d:%02d",
