@@ -7,7 +7,8 @@
 static std::string to_lowercase(const std::string& string)
 {
     std::string result(string.size(), ' ');
-    std::transform(string.begin(), string.end(), result.begin(), std::tolower);
+    std::transform(string.begin(), string.end(), result.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
     return result;
 }
 
