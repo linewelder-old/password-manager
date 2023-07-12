@@ -11,7 +11,7 @@ void print_list_index(unsigned int index, unsigned int list_length);
 void print_n_times(char ch, unsigned int times);
 void print_fitted(unsigned int column_width, const std::string& value);
 
-void print_exception(const std::string tytul, const PrintableException& ex);
+void print_exception(const std::string title, const PrintableException& ex);
 
 template <typename T>
 void print_list(const std::vector<T>& values,

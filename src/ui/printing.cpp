@@ -53,11 +53,11 @@ void print_fitted(unsigned int column_width, const std::string& value)
     }
 }
 
-void print_exception(const std::string tytul, const PrintableException& ex)
+void print_exception(const std::string title, const PrintableException& ex)
 {
     DefaultExceptionPrinter printer(std::cout);
 
-    std::cout << tytul << ": ";
+    std::cout << title << ": ";
     ex.print(printer);
     std::cout << '\n';
 }
