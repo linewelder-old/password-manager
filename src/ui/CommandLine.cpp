@@ -65,8 +65,9 @@ void CommandLine::read_and_run_command()
         }
         else
         {
-            std::cout << "Blad: Nie znane polecenie: '"
-                      << command << ' ' << subcommand << '\n';
+            std::cout << "Blad: Nieznane polecenie: '"
+                      << command << ' ' << subcommand
+                      << "', wpisz 'pomoc' aby zobaczyc liste dostepnych polecen\n";
         }
     }
     else if (command == "usun")
@@ -82,8 +83,9 @@ void CommandLine::read_and_run_command()
         }
         else
         {
-            std::cout << "Blad: Nie znane polecenie: '"
-                      << command << ' ' << subcommand << '\n';
+            std::cout << "Blad: Nieznane polecenie: '"
+                      << command << ' ' << subcommand
+                      << "', wpisz 'pomoc' aby zobaczyc liste dostepnych polecen\n";
         }
     }
     else if (command == "pomoc")
@@ -92,7 +94,9 @@ void CommandLine::read_and_run_command()
     }
     else
     {
-        std::cout << "Blad: Nie znane polecenie: '" << command << '\n';
+        std::cout
+            << "Blad: Nieznane polecenie: '" << command
+            << "', wpisz 'pomoc' aby zobaczyc liste dostepnych polecen\n";
     }
 }
 
@@ -347,7 +351,16 @@ void CommandLine::read_and_run_remove_category()
 
 void CommandLine::read_and_run_help()
 {
-    std::cout << "Nie zaimplementowano :(\n";
+    std::cout <<
+        "  Dostepne polecenia:\n"
+        "szukaj [PARAMETRY] [sortuj <WLASCIWOSCI>] - znajdz hasla\n"
+        "sortuj <WLASCIWOSCI>                      - wypisz posortowana liste hasel\n"
+        "pokaz <ID HASLA>                          - wypisz szegoly o hasle\n"
+        "edytuj <ID HASLA>                         - edytuj dane hasla\n"
+        "dodaj haslo '<NAZWA>' [PARAMETRY]         - dodaj nowe haslo\n"
+        "dodaj kategorie '<NAZWA>'                 - dodaj nowa kategorie hasel\n"
+        "usun haslo <ID HASLA>                     - usun haslo\n"
+        "usun kategorie <ID KATEGORII>             - usun kategorie hasel\n";
     reader.read_end_of_line();
 }
 
