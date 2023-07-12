@@ -21,5 +21,5 @@ public:
     InvalidFindSortParameterExceptionType get_type() const;
     PasswordProperty get_property() const;
 
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };

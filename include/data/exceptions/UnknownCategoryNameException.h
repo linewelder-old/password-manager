@@ -12,5 +12,5 @@ public:
     UnknownCategoryNameException(std::string name);
     std::string get_category_name() const;
 
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };

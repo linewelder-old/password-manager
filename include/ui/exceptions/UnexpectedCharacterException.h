@@ -22,5 +22,5 @@ public:
     ExpectedCharacterType get_expected_character_type() const;
     char get_found_char() const;
 
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };

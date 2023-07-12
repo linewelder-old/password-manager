@@ -9,5 +9,5 @@ class NothingSelectedException : public PrintableException
 {
 public:
     NothingSelectedException();
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };

@@ -12,5 +12,5 @@ public:
     unsigned int get_index() const;
     unsigned int get_list_length() const;
 
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };

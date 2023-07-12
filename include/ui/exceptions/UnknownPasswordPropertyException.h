@@ -10,5 +10,5 @@ public:
     UnknownPasswordPropertyException(std::string property);
     std::string get_property() const;
 
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };

@@ -17,22 +17,22 @@ class MemoryPasswordBase : public PasswordBase
 public:
     MemoryPasswordBase();
 
-    PasswordId add_password(Password password);
-    CategoryId add_category(std::string name);
-    void insert_category(CategoryId id, std::string name);
+    PasswordId add_password(Password password) override;
+    CategoryId add_category(std::string name) override;
+    void insert_category(CategoryId id, std::string name) override;
 
-    void remove_password(PasswordId id);
-    void remove_category(CategoryId id);
+    void remove_password(PasswordId id) override;
+    void remove_category(CategoryId id) override;
 
-    Password get_password(PasswordId id) const;
-    std::string get_category(CategoryId id) const;
+    Password get_password(PasswordId id) const override;
+    std::string get_category(CategoryId id) const override;
 
     std::vector<PasswordRecord> fetch_passwords(
         const std::vector<SearchParameter>& search_parameters,
-        const std::vector<PasswordProperty>& sorting_parameters) const;
+        const std::vector<PasswordProperty>& sorting_parameters) const override;
 
-    std::vector<CategoryRecord> fetch_all_categories() const;
-    CategoryId get_category_id(std::string name) const;
+    std::vector<CategoryRecord> fetch_all_categories() const override;
+    CategoryId get_category_id(std::string name) const override;
 
 private:
     std::optional<CategoryId> find_category(const std::string& name) const;

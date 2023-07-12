@@ -23,14 +23,14 @@ public:
 
     void print(const PasswordProperty property) const;
 
-    void print(const InvalidDataException&              ex) const;
-    void print(const InvalidFileFormatException&        ex) const;
-    void print(const InvalidFindSortParameterException& ex) const;
-    void print(const UnknownCategoryNameException&      ex) const;
-    void print(const UnexpectdCharacterException&       ex) const;
-    void print(const UnexpectedWordException&           ex) const;
-    void print(const UnknownPasswordPropertyException&  ex) const;
-    void print(const NothingSelectedException&          ex) const;
-    void print(const UnknownCommandException&           ex) const;
-    void print(const IndexOutOfBoundsException&         ex) const;
+    void print(const InvalidDataException&              ex) const override;
+    void print(const InvalidFileFormatException&        ex) const override;
+    void print(const InvalidFindSortParameterException& ex) const override;
+    void print(const UnknownCategoryNameException&      ex) const override;
+    void print(const UnexpectdCharacterException&       ex) const override;
+    void print(const UnexpectedWordException&           ex) const override;
+    void print(const UnknownPasswordPropertyException&  ex) const override;
+    void print(const NothingSelectedException&          ex) const override;
+    void print(const UnknownCommandException&           ex) const override;
+    void print(const IndexOutOfBoundsException&         ex) const override;
 };

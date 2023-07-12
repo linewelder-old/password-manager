@@ -19,5 +19,5 @@ public:
     InvalidFileFormatException(InvalidFileFormatExceptionType type);
     InvalidFileFormatExceptionType get_type() const;
 
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };

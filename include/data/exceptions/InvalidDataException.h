@@ -22,5 +22,5 @@ public:
     InvalidDataException(InvalidDataExceptionType type);
     InvalidDataExceptionType get_type() const;
 
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };

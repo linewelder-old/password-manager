@@ -10,5 +10,5 @@ public:
     UnknownCommandException(std::string command);
     std::string get_command() const;
 
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };

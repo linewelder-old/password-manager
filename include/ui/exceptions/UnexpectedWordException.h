@@ -12,5 +12,5 @@ public:
     std::string get_found_word() const;
     std::string get_expected_word() const;
 
-    void print(const ExceptionPrinter& printer) const;
+    void print(const ExceptionPrinter& printer) const override;
 };
