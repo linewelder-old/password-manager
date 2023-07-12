@@ -1,5 +1,5 @@
 #include "ui/exceptions/UnexpectedWordException.h"
-#include "..\..\..\include\ui\exceptions\UnknownPasswordPropertyException.h"
+#include "ui/exceptions/UnknownPasswordPropertyException.h"
 
 UnexpectedWordException::UnexpectedWordException(
 	std::string expected_word, std::string found_word)
