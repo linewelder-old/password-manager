@@ -5,7 +5,7 @@ INCLUDE_DIR := include
 SRCS := $(shell find $(SRC_DIR) -type f -name '*.cpp')
 
 CXX := g++
-CXXFLAGS := -I $(INCLUDE_DIR)
+CXXFLAGS := -g -I $(INCLUDE_DIR)
 
 BUILD_DIR := build
 DEP_DIR := $(BUILD_DIR)/.deps
