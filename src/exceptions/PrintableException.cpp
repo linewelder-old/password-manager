@@ -3,4 +3,9 @@
 #include <exception>
 
 PrintableException::PrintableException(std::string what)
-    : std::exception(what.c_str()) {}
+    : message(what) {}
+
+const char* PrintableException::what() const noexcept
+{
+    return message.c_str();
+}
