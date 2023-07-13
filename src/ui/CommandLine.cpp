@@ -234,9 +234,8 @@ void CommandLine::read_and_run_add_password()
     const auto categories = base.fetch_all_categories();
     if (categories.empty())
     {
-        std::string new_category;
         std::cout << "  Wpisz nazwe nowej kategorii:\n > ";
-        std::cin >> new_category;
+        std::string new_category = reader.read_next_line();
 
         category_id = base.add_category(new_category);
     }
@@ -256,6 +255,7 @@ void CommandLine::read_and_run_add_password()
             
             reader.new_line();
             index = reader.read_number();
+            reader.read_end_of_line();
 
             if (index > 0 && index <= categories.size())
             {
@@ -270,14 +270,11 @@ void CommandLine::read_and_run_add_password()
 
     std::cout << "  Wpisz wartosc hasla (lub wpisz polecenie 'generuj' dla generacji hasla):\n"
               << " > ";
-
-    std::string value;
-    std::cin >> value;
+    std::string value = reader.read_next_line();
 
     if (value == "generuj")
     {
         std::cout << "  Wpisz dlugosc hasla i typy znakow:\n > ";
-        reader.new_line();
         reader.new_line();
         unsigned int password_length = reader.read_number();
         

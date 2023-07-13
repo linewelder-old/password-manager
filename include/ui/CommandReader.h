@@ -16,6 +16,7 @@ public:
 	CommandReader(std::istream& stream);
 
 	void new_line();
+	std::string read_next_line();
 
 	std::string read_word();
 	bool can_read_word();

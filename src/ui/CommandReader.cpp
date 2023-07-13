@@ -12,6 +12,12 @@ void CommandReader::new_line()
 	line_stream = std::istringstream(line);
 }
 
+std::string CommandReader::read_next_line()
+{
+	getline(stream, line);
+	return line;
+}
+
 std::string CommandReader::read_word()
 {
 	skip_spaces();
