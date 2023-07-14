@@ -4,19 +4,14 @@
 #include <cmath>
 #include <ctime>
 #include <string>
+#include <iomanip>
 #include <iostream>
 #include "ui/DefaultExceptionPrinter.h"
 
 void print_time(std::time_t timestamp)
 {
-    std::tm time;
-    time = *std::localtime(&timestamp);
-
-    printf(
-        "%02d.%02d.%d %d:%02d:%02d",
-        time.tm_mday, time.tm_mon + 1, time.tm_year + 1900,
-        time.tm_hour, time.tm_min, time.tm_sec
-    );
+    std::tm* time = std::localtime(&timestamp);
+    std::cout << std::put_time(time, "%d.%m.%Y %H:%M:%S");
 }
 
 unsigned int get_length_in_characters(unsigned int value)
