@@ -30,13 +30,13 @@ public:
 	CommandReader(std::istream& stream);
 
 	void new_line();
-	std::string read_next_line();
+	std::string_view read_next_line();
 
-	std::string read_word();
+	std::string_view read_word();
 	bool can_read_word();
 
-	void read_keyword(std::string expected);
-	std::string read_string_literal();
+	void read_keyword(std::string_view expected);
+	std::string_view read_string_literal();
 	unsigned int read_number();
 	void read_end_of_line();
 

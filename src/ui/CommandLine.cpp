@@ -34,7 +34,7 @@ void CommandLine::run()
 void CommandLine::read_and_run_command()
 {
     reader.new_line();
-    std::string command = reader.read_word();
+    std::string_view command = reader.read_word();
 
     if (command == "szukaj")
     {
@@ -54,7 +54,7 @@ void CommandLine::read_and_run_command()
     }
     else if (command == "dodaj")
     {
-        std::string subcommand = reader.read_word();
+        std::string_view subcommand = reader.read_word();
         if (subcommand == "haslo")
         {
             read_and_run_add_password();
@@ -72,7 +72,7 @@ void CommandLine::read_and_run_command()
     }
     else if (command == "usun")
     {
-        std::string subcommand = reader.read_word();
+        std::string_view subcommand = reader.read_word();
         if (subcommand == "haslo")
         {
             read_and_run_remove_password();
@@ -100,7 +100,7 @@ void CommandLine::read_and_run_command()
     }
 }
 
-std::map<std::string, PasswordProperty> password_properties
+std::map<std::string_view, PasswordProperty> password_properties
 {
     { "nazwa",     PasswordProperty::NAME     },
     { "kategoria", PasswordProperty::CATEGORY },
@@ -108,12 +108,12 @@ std::map<std::string, PasswordProperty> password_properties
     { "login",     PasswordProperty::LOGIN    }
 };
 
-static PasswordProperty get_property_for_name(const std::string& name)
+static PasswordProperty get_property_for_name(std::string_view name)
 {
     const auto found = password_properties.find(name);
     if (found == password_properties.end())
     {
-        throw UnknownPasswordPropertyException(name);
+        throw UnknownPasswordPropertyException(std::string(name));
     }
 
     return found->second;
@@ -124,18 +124,18 @@ void CommandLine::read_and_run_find()
     std::vector<SearchParameter> search_for;
     while (reader.can_read_word())
     {
-        const std::string property_name_or_sort = reader.read_word();
+        const std::string_view property_name_or_sort = reader.read_word();
         if (property_name_or_sort == "sortuj")
         {
             read_and_run_sort(search_for);
             return;
         }
 
-        const std::string query = reader.read_string_literal();
+        const std::string_view query = reader.read_string_literal();
 
         const PasswordProperty property =
             get_property_for_name(property_name_or_sort);
-        search_for.push_back({ property, query });
+        search_for.push_back({ property, std::string(query) });
     }
 
     reader.read_end_of_line();
@@ -150,7 +150,7 @@ void CommandLine::read_and_run_sort(
     std::vector<PasswordProperty> sort_by;
     while (reader.can_read_word())
     {
-        const std::string property_name = reader.read_word();
+        const std::string_view property_name = reader.read_word();
         const PasswordProperty property = get_property_for_name(property_name);
 
         sort_by.push_back(property);
@@ -206,25 +206,25 @@ PasswordRecord CommandLine::get_selected_password(unsigned int index)
 
 void CommandLine::read_and_run_add_password()
 {
-    const std::string name = reader.read_string_literal();
+    const std::string_view name = reader.read_string_literal();
 
     std::optional<std::string> service = std::nullopt;
     std::optional<std::string> login = std::nullopt;
 
     while (reader.can_read_word())
     {
-        std::string property_name = reader.read_word();
+        std::string_view property_name = reader.read_word();
         if (property_name == "strona")
         {
-            service = reader.read_string_literal();
+            service = std::string(reader.read_string_literal());
         }
         else if (property_name == "login")
         {
-            login = reader.read_string_literal();
+            login = std::string(reader.read_string_literal());
         }
         else
         {
-            throw UnknownPasswordPropertyException(property_name);
+            throw UnknownPasswordPropertyException(std::string(property_name));
         }
     }
 
@@ -235,9 +235,9 @@ void CommandLine::read_and_run_add_password()
     if (categories.empty())
     {
         std::cout << "  Wpisz nazwe nowej kategorii:\n > ";
-        std::string new_category = reader.read_next_line();
+        std::string_view new_category = reader.read_next_line();
 
-        category_id = base.add_category(new_category);
+        category_id = base.add_category(std::string(new_category));
     }
     else
     {
@@ -270,7 +270,7 @@ void CommandLine::read_and_run_add_password()
 
     std::cout << "  Wpisz wartosc hasla (lub wpisz polecenie 'generuj' dla generacji hasla):\n"
               << " > ";
-    std::string value = reader.read_next_line();
+    std::string_view value = reader.read_next_line();
 
     if (value == "generuj")
     {
@@ -281,7 +281,7 @@ void CommandLine::read_and_run_add_password()
         PasswordGenerator generator;
         while (reader.can_read_word())
         {
-            std::string char_set = reader.read_word();
+            std::string_view char_set = reader.read_word();
             if (char_set == "duze")
             {
                 generator.use_uppercase = true;
@@ -317,7 +317,13 @@ void CommandLine::read_and_run_add_password()
         std::cout << "  Wygenerowano: " << value << '\n';
     }
 
-    base.add_password({ name, value, category_id, service, login });
+    base.add_password(Password {
+        .name = std::string(name),
+        .value = std::string(value),
+        .category_id = category_id,
+        .service = service,
+        .login = login
+    });
 }
 
 void CommandLine::read_and_run_remove_password()
@@ -331,18 +337,18 @@ void CommandLine::read_and_run_remove_password()
 
 void CommandLine::read_and_run_add_category()
 {
-    const std::string name = reader.read_string_literal();
+    const std::string_view name = reader.read_string_literal();
     reader.read_end_of_line();
 
-    base.add_category(name);
+    base.add_category(std::string(name));
 }
 
 void CommandLine::read_and_run_remove_category()
 {
-    const std::string name = reader.read_string_literal();
+    const std::string_view name = reader.read_string_literal();
     reader.read_end_of_line();
 
-    CategoryId id = base.get_category_id(name);
+    CategoryId id = base.get_category_id(std::string(name));
     base.remove_category(id);
 }
 

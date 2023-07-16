@@ -16,13 +16,13 @@ void CommandReader::new_line()
 	next_token();
 }
 
-std::string CommandReader::read_next_line()
+std::string_view CommandReader::read_next_line()
 {
 	getline(stream, line);
 	return line;
 }
 
-std::string CommandReader::read_word()
+std::string_view CommandReader::read_word()
 {
 	if (!can_read_word())
 	{
@@ -30,7 +30,7 @@ std::string CommandReader::read_word()
 			ExpectedCharacterType::LETTER, peek_token().text.at(0));
 	}
 
-	return std::string(next_token().text);
+	return next_token().text;
 }
 
 bool CommandReader::can_read_word()
@@ -38,16 +38,16 @@ bool CommandReader::can_read_word()
 	return peek_token().type == TokenType::WORD;
 }
 
-void CommandReader::read_keyword(std::string expected)
+void CommandReader::read_keyword(std::string_view expected)
 {
-	const std::string found_word = read_word();
+	const std::string_view found_word = read_word();
 	if (found_word != expected)
 	{
-		throw UnexpectedWordException(expected, found_word);
+		throw UnexpectedWordException(std::string(expected), std::string(found_word));
 	}
 }
 
-std::string CommandReader::read_string_literal()
+std::string_view CommandReader::read_string_literal()
 {
 	if (peek_token().type != TokenType::STRING_LITERAL)
 	{
@@ -56,7 +56,7 @@ std::string CommandReader::read_string_literal()
 	}
 
 	std::string_view with_quotes = next_token().text;
-	return std::string( with_quotes.substr(1, with_quotes.size() - 2) );
+	return with_quotes.substr(1, with_quotes.size() - 2);
 }
 
 unsigned int CommandReader::read_number()
