@@ -1,7 +1,8 @@
 #include "ui/CommandReader.h"
 
+#include <istream>
 #include <string>
-#include <sstream>
+#include <string_view>
 
 CommandReader::CommandReader(std::istream& stream)
 	: stream(stream) {}
@@ -9,7 +10,10 @@ CommandReader::CommandReader(std::istream& stream)
 void CommandReader::new_line()
 {
 	getline(stream, line);
-	line_stream = std::istringstream(line);
+	start = &*line.begin();
+	current = start;
+
+	next_token();
 }
 
 std::string CommandReader::read_next_line()
@@ -20,30 +24,18 @@ std::string CommandReader::read_next_line()
 
 std::string CommandReader::read_word()
 {
-	skip_spaces();
-
-	const char peeked = (char)line_stream.peek();
-	if (!isalpha(peeked))
+	if (!can_read_word())
 	{
-		throw UnexpectdCharacterException(ExpectedCharacterType::LETTER, peeked);
+		throw UnexpectdCharacterException(
+			ExpectedCharacterType::LETTER, peek_token().text.at(0));
 	}
 
-	std::stringstream ss;
-
-	while ( isalpha((char)line_stream.peek()) )
-	{
-		ss << (char)line_stream.get();
-	}
-
-	return ss.str();
+	return std::string(next_token().text);
 }
 
 bool CommandReader::can_read_word()
 {
-	skip_spaces();
-
-	const char peeked = (char)line_stream.peek();
-	return isalpha(peeked);
+	return peek_token().type == TokenType::WORD;
 }
 
 void CommandReader::read_keyword(std::string expected)
@@ -57,67 +49,140 @@ void CommandReader::read_keyword(std::string expected)
 
 std::string CommandReader::read_string_literal()
 {
-	skip_spaces();
-
-	const char quote = line_stream.get();
-	if (quote != '\'')
+	if (peek_token().type != TokenType::STRING_LITERAL)
 	{
-		throw UnexpectdCharacterException(ExpectedCharacterType::QUOTE, quote);
+		throw UnexpectdCharacterException(
+			ExpectedCharacterType::QUOTE, peek_token().text.at(0));
 	}
 
-	std::stringstream ss;
-	while (true)
-	{
-		const int ch = line_stream.get();
-		if (ch == -1 || ch == '\n' || ch == '\r')
-		{
-			throw UnexpectdCharacterException(ExpectedCharacterType::QUOTE, ch);
-		}
-		else if (ch == '\'')
-		{
-			break;
-		}
-
-		ss << (char)ch;
-	}
-
-	return ss.str();
+	std::string_view with_quotes = next_token().text;
+	return std::string( with_quotes.substr(1, with_quotes.size() - 2) );
 }
 
 unsigned int CommandReader::read_number()
 {
-	skip_spaces();
-
-	const char peeked = (char)line_stream.peek();
-	if (!isdigit(peeked))
+	if (peek_token().type != TokenType::NUMBER)
 	{
-		throw UnexpectdCharacterException(ExpectedCharacterType::DIGIT, peeked);
+		throw UnexpectdCharacterException(
+			ExpectedCharacterType::DIGIT, peek_token().text.at(0));
 	}
 
-	unsigned int value = 0;
-	while (isdigit((char)line_stream.peek()))
+	return next_token().number;
+}
+
+void CommandReader::read_end_of_line()
+{
+	if (peek_token().type != TokenType::END_OF_LINE)
 	{
-		value = 10 * value + (char)line_stream.get() - '0';
+		throw UnexpectdCharacterException(
+			ExpectedCharacterType::END_OF_LINE, peek_token().text.at(0));
+	}
+}
+
+Token CommandReader::peek_token() const
+{
+	return current_token;
+}
+
+Token CommandReader::next_token()
+{
+	skip_spaces();
+	const Token previous_token = current_token;
+	start = current;
+
+	const char ch = peek();
+	if (isalpha(ch))
+	{
+		consume_word();
+		update_current_token(TokenType::WORD);
+	}
+	else if (ch == '\'')
+	{
+		consume_string_literal();
+		update_current_token(TokenType::STRING_LITERAL);
+	}
+	else if (isdigit(ch))
+	{
+		unsigned int number = consume_number();
+		update_current_token(TokenType::NUMBER);
+		current_token.number = number;
+	}
+	else if (ch == '\0')
+	{
+		current_token = Token {
+			.type = TokenType::END_OF_LINE,
+			.text = std::string_view(current, 1)
+		};
+	}
+	else
+	{
+		advance();
+		update_current_token(TokenType::UNEXPECTED_CHARACTER);
+	}
+
+	return previous_token;
+}
+
+void CommandReader::skip_spaces()
+{
+	while (peek() == ' ')
+	{
+		advance();
+	}
+}
+
+void CommandReader::update_current_token(TokenType type)
+{
+	current_token = Token {
+		.type = type,
+		.text = std::string_view(
+			start, std::distance(start, current)),
+	};
+}
+
+void CommandReader::consume_word()
+{
+	while ( isalpha(peek()) )
+	{
+		advance();
+	}
+}
+
+void CommandReader::consume_string_literal()
+{
+	advance();
+	while (true)
+	{
+		const char ch = advance();
+		if (ch == '\'')
+		{
+			break;
+		}
+		else if (ch == '\0' || ch == '\n' || ch == '\r')
+		{
+			throw UnexpectdCharacterException(ExpectedCharacterType::QUOTE, ch);
+		}
+	}
+}
+
+unsigned int CommandReader::consume_number()
+{
+	unsigned int value = 0;
+	while ( isdigit(peek()) )
+	{
+		value = 10 * value + (advance() - '0');
 	}
 
 	return value;
 }
 
-void CommandReader::read_end_of_line()
+char CommandReader::peek() const
 {
-	skip_spaces();
-
-	const char ch = line_stream.get();
-	if (ch != -1)
-	{
-		throw UnexpectdCharacterException(ExpectedCharacterType::END_OF_LINE, ch);
-	}
+	return *current;
 }
 
-void CommandReader::skip_spaces()
+char CommandReader::advance()
 {
-	while ( (char)line_stream.peek() == ' ')
-	{
-		line_stream.get();
-	}
+	if (!*current) return '\0';
+	return *current++;
 }
